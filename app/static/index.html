@@ -1,0 +1,119 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Women Safety Risk Intelligence</title>
+    <link rel="preconnect" href="https://cdn.jsdelivr.net" />
+    <link rel="preconnect" href="https://unpkg.com" />
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+    <link rel="stylesheet" href="/static/styles.css" />
+  </head>
+  <body>
+    <div class="ambient"></div>
+    <aside class="sidebar">
+      <div class="brand">
+        <img src="/static/assets/safety-city.svg" alt="" />
+        <div>
+          <span>Karachi</span>
+          <strong>Safety Lens</strong>
+        </div>
+      </div>
+      <nav class="tabs" aria-label="Dashboard views">
+        <button class="tab active" data-tab="overview">Overview</button>
+        <button class="tab" data-tab="trends">Trends</button>
+        <button class="tab" data-tab="map">Map</button>
+        <button class="tab" data-tab="factors">Factors</button>
+        <button class="tab" data-tab="predict">Predict</button>
+      </nav>
+      <div class="side-note">
+        <span id="rangeText">Loading data...</span>
+        <strong id="recordText">100k records</strong>
+      </div>
+    </aside>
+
+    <main class="shell">
+      <section class="hero">
+        <div class="hero-copy">
+          <p class="eyebrow">Women safety prediction system</p>
+          <h1>Risk intelligence across city spaces, time, and conditions.</h1>
+          <p>
+            A live dashboard powered by your 100k-record dataset, turning incident patterns into
+            readable hotspots, trends, and prediction signals.
+          </p>
+        </div>
+        <div class="hero-visual">
+          <img src="/static/assets/safety-city.svg" alt="Stylized city safety visualization" />
+          <div class="pulse one"></div>
+          <div class="pulse two"></div>
+          <div class="pulse three"></div>
+        </div>
+      </section>
+
+      <section id="overview" class="panel active">
+        <div class="stat-grid">
+          <article class="stat"><span>Records</span><strong id="statRecords">...</strong></article>
+          <article class="stat"><span>Areas</span><strong id="statAreas">...</strong></article>
+          <article class="stat"><span>Avg Risk</span><strong id="statRisk">...</strong></article>
+          <article class="stat danger"><span>High Risk</span><strong id="statHigh">...</strong></article>
+        </div>
+        <div class="grid two">
+          <article class="card"><h2>Risk Distribution</h2><canvas id="riskChart"></canvas></article>
+          <article class="card"><h2>Crime Type Frequency</h2><canvas id="crimeChart"></canvas></article>
+        </div>
+        <div class="grid two">
+          <article class="card"><h2>Risk by Area Type</h2><canvas id="areaTypeChart"></canvas></article>
+          <article class="card highlight"><h2>Highest Risk Signal</h2><div id="highestArea"></div></article>
+        </div>
+      </section>
+
+      <section id="trends" class="panel">
+        <div class="grid one">
+          <article class="card wide"><h2>Monthly Risk Trend</h2><canvas id="monthlyChart"></canvas></article>
+        </div>
+        <div class="grid two">
+          <article class="card"><h2>Hourly Risk Pattern</h2><canvas id="hourlyChart"></canvas></article>
+          <article class="card"><h2>Time of Day Split</h2><canvas id="timeChart"></canvas></article>
+        </div>
+      </section>
+
+      <section id="map" class="panel">
+        <div class="map-layout">
+          <article class="card map-card"><h2>High-Risk Hotspot Map</h2><div id="leafletMap"></div></article>
+          <article class="card list-card"><h2>Top Risk Corridors</h2><div id="corridorList"></div></article>
+        </div>
+      </section>
+
+      <section id="factors" class="panel">
+        <div class="grid two">
+          <article class="card"><h2>Lighting Condition Impact</h2><canvas id="lightingChart"></canvas></article>
+          <article class="card"><h2>Police Presence Impact</h2><canvas id="policeChart"></canvas></article>
+        </div>
+        <div class="grid two">
+          <article class="card"><h2>Weather vs Avg Risk Score</h2><canvas id="weatherChart"></canvas></article>
+          <article class="card"><h2>Area Type Volume</h2><canvas id="areaVolumeChart"></canvas></article>
+        </div>
+      </section>
+
+      <section id="predict" class="panel">
+        <div class="predict-layout">
+          <form class="card form-card" id="predictForm">
+            <h2>Scenario Risk Predictor</h2>
+            <div class="form-grid" id="formGrid"></div>
+            <button class="primary" type="submit">Predict Risk</button>
+          </form>
+          <article class="result-card" id="predictionResult">
+            <span>Prediction</span>
+            <strong>Ready</strong>
+            <p>Choose a scenario and run the model.</p>
+            <div class="prob-bars" id="probBars"></div>
+          </article>
+        </div>
+      </section>
+    </main>
+
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+    <script src="/static/app.js"></script>
+  </body>
+</html>
