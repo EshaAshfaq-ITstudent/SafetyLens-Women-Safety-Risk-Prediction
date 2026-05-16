@@ -15,8 +15,17 @@ Chart.defaults.color = colors.muted;
 Chart.defaults.borderColor = "rgba(214,255,237,.12)";
 Chart.defaults.font.family = "Inter, system-ui, sans-serif";
 
-const api = (path, options) => fetch(path, options).then((res) => {
-  if (!res.ok) throw new Error(`Request failed: ${path}`);
+const api = (path, options) => fetch(path, options).then(async (res) => {
+  if (!res.ok) {
+    let message = `Request failed: ${path}`;
+    try {
+      const body = await res.json();
+      message = body.detail || message;
+    } catch {
+      message = res.statusText || message;
+    }
+    throw new Error(message);
+  }
   return res.json();
 });
 
@@ -227,24 +236,56 @@ async function buildPredictor() {
 
   document.getElementById("predictForm").addEventListener("submit", async (event) => {
     event.preventDefault();
-    const payload = {};
-    new FormData(event.currentTarget).forEach((value, key) => {
-      payload[key] = Number.isNaN(Number(value)) || value === "" ? value : Number(value);
-    });
-    const result = await api("/api/predict", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(payload),
-    });
-    renderPrediction(result);
+    const form = event.currentTarget;
+    const button = form.querySelector("button[type='submit']");
+    button.disabled = true;
+    button.textContent = "Predicting...";
+    renderPredicting();
+
+    try {
+      const payload = readPredictionPayload(form);
+      const result = await api("/api/predict", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(payload),
+      });
+      renderPrediction(result, payload);
+    } catch (error) {
+      renderPredictionError(error);
+    } finally {
+      button.disabled = false;
+      button.textContent = "Predict Risk";
+    }
   });
 }
 
-function renderPrediction(result) {
+function readPredictionPayload(form) {
+  const payload = {};
+  new FormData(form).forEach((value, key) => {
+    const field = form.elements[key];
+    if (field?.type === "number") {
+      const fallback = defaults[key] ?? 0;
+      payload[key] = value === "" ? fallback : Number(value);
+      return;
+    }
+    payload[key] = value;
+  });
+  return payload;
+}
+
+function renderPredicting() {
+  const card = document.getElementById("predictionResult");
+  card.style.background = "linear-gradient(135deg, rgba(103,232,249,.16), rgba(13,24,29,.9))";
+  card.querySelector("strong").textContent = "Running";
+  card.querySelector("p").textContent = "Fresh scenario is being sent to the model...";
+  document.getElementById("probBars").innerHTML = "";
+}
+
+function renderPrediction(result, payload) {
   const card = document.getElementById("predictionResult");
   card.style.background = `linear-gradient(135deg, ${result.color}28, rgba(13,24,29,.9))`;
   card.querySelector("strong").textContent = title(result.risk_level);
-  card.querySelector("p").textContent = `${Math.round(result.confidence * 100)}% model confidence for this scenario.`;
+  card.querySelector("p").textContent = `${Math.round(result.confidence * 100)}% confidence / ${title(payload.area_type)} / ${title(payload.time_of_day)} / ${payload.hour}:00 / refreshed ${new Date().toLocaleTimeString()}.`;
   document.getElementById("probBars").innerHTML = riskOrder.map((risk) => {
     const value = result.probabilities[risk] || 0;
     return `
@@ -254,6 +295,14 @@ function renderPrediction(result) {
       </div>
     `;
   }).join("");
+}
+
+function renderPredictionError(error) {
+  const card = document.getElementById("predictionResult");
+  card.style.background = "linear-gradient(135deg, rgba(251,113,133,.22), rgba(13,24,29,.9))";
+  card.querySelector("strong").textContent = "Error";
+  card.querySelector("p").textContent = error.message || "Prediction failed. Check the selected values and try again.";
+  document.getElementById("probBars").innerHTML = "";
 }
 
 async function boot() {

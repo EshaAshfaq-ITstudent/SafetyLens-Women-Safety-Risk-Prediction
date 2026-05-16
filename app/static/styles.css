@@ -314,6 +314,11 @@ select, input {
   font-weight: 800;
 }
 
+.primary:disabled {
+  cursor: wait;
+  opacity: .72;
+}
+
 .result-card {
   min-height: 440px;
   padding: 24px;
