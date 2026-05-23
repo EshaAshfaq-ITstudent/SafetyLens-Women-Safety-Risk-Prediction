@@ -165,6 +165,20 @@ def summary() -> dict[str, Any]:
         .head(1)
         .index[0]
     )
+    safe_areas = (
+        df.groupby("area_name")["risk_score"]
+        .mean()
+        .sort_values()
+        .head(4)
+        .reset_index()
+        .rename(columns={"risk_score": "avg_risk_score"})
+    )
+    safe_area_type = (
+        df.groupby("area_type")["risk_score"].mean().sort_values().index[0]
+    )
+    safe_time_of_day = (
+        df.groupby("time_of_day")["risk_score"].mean().sort_values().index[0]
+    )
     return {
         "records": int(len(df)),
         "areas": int(df["area_name"].nunique()),
@@ -178,6 +192,9 @@ def summary() -> dict[str, Any]:
         "risk_counts": counts(df["risk_level"], RISK_ORDER),
         "top_crimes": counts(df["crime_type"])[:8],
         "area_types": counts(df["area_type"]),
+        "top_safe_areas": safe_areas.to_dict(orient="records"),
+        "safe_area_type": safe_area_type,
+        "safe_time_of_day": safe_time_of_day,
     }
 
 
@@ -281,7 +298,31 @@ def options() -> dict[str, list[Any]]:
         "transport_availability",
         "weather",
     ]
-    return {col: sorted(df[col].dropna().unique().tolist()) for col in option_cols}
+    options = {col: sorted(df[col].dropna().unique().tolist()) for col in option_cols}
+    options["area_name"] = sorted(df["area_name"].dropna().unique().tolist())
+    return options
+
+
+@app.get("/api/area")
+def area_info(name: str) -> dict[str, Any]:
+    df = load_data()
+    area = df[df["area_name"] == name]
+    if area.empty:
+        raise HTTPException(status_code=404, detail=f"Area not found: {name}")
+    high_count = int((area["risk_level"] == "high").sum())
+    total = len(area)
+    most_common_crime = area["crime_type"].mode().iat[0] if not area["crime_type"].mode().empty else None
+    most_common_time = area["time_of_day"].mode().iat[0] if not area["time_of_day"].mode().empty else None
+    return {
+        "area_name": name,
+        "area_type": area["area_type"].mode().iat[0] if not area["area_type"].mode().empty else None,
+        "records": total,
+        "avg_risk_score": round(float(area["risk_score"].mean()), 3),
+        "high_risk_rate": round(high_count / total * 100, 1),
+        "top_crime": most_common_crime,
+        "common_time_of_day": most_common_time,
+        "risk_counts": counts(area["risk_level"], RISK_ORDER),
+    }
 
 
 @app.post("/api/predict")

@@ -11,39 +11,87 @@
   </head>
   <body>
     <div class="ambient"></div>
-    <aside class="sidebar">
-      <div class="brand">
-        <img src="/static/assets/safety-city.svg" alt="" />
-        <div>
-          <span>Karachi</span>
-          <strong>Safety Lens</strong>
+    <header class="topbar">
+      <div class="topbar-brand">
+        <div class="brand">
+          <img src="/static/assets/safety-city.svg" alt="Safety Lens logo" />
+          <div>
+            <span>Women safety companion</span>
+            <strong>Safety Lens</strong>
+          </div>
         </div>
       </div>
-      <nav class="tabs" aria-label="Dashboard views">
+      <nav class="topnav" aria-label="Dashboard views">
         <button class="tab active" data-tab="overview">Overview</button>
         <button class="tab" data-tab="trends">Trends</button>
         <button class="tab" data-tab="map">Map</button>
         <button class="tab" data-tab="factors">Factors</button>
         <button class="tab" data-tab="predict">Predict</button>
+        <button class="tab" data-tab="area">Area</button>
       </nav>
-      <div class="side-note">
-        <span id="rangeText">Loading data...</span>
-        <strong id="recordText">100k records</strong>
+      <div class="top-actions">
+        <button class="secondary" id="downloadAppBtn">Download App</button>
+        <button class="secondary" id="checkAreaBtn">Area Safety</button>
       </div>
-    </aside>
+    </header>
 
     <main class="shell">
       <section class="hero">
         <div class="hero-copy">
-          <p class="eyebrow">Women safety prediction system</p>
-          <h1>Risk intelligence across city spaces, time, and conditions.</h1>
+          <p class="eyebrow">Women safety companion</p>
+          <h1>Smart safety guidance for every street, zone, and hour.</h1>
           <p>
-            A live dashboard powered by your 100k-record dataset, turning incident patterns into
-            readable hotspots, trends, and prediction signals.
+            Track safety signals, choose safer routes, and access women-focused risk insights with a dashboard designed for confidence.
           </p>
+          <div class="hero-actions">
+            <button class="primary" id="downloadAppBtn">Get mobile companion</button>
+            <button class="secondary" id="checkAreaBtn">Area safety</button>
+          </div>
+          <div class="hero-stats">
+            <div class="hero-stat-card">
+              <span>Data coverage</span>
+              <strong id="recordText">Loading records...</strong>
+            </div>
+            <div class="hero-stat-card">
+              <span>Dataset range</span>
+              <strong id="rangeText">Loading dates...</strong>
+            </div>
+          </div>
+          <div class="hero-pill-row">
+            <div class="feature-pill"><strong>Live Alerts</strong><span>Real-time risk warnings</span></div>
+            <div class="feature-pill"><strong>Route Safety</strong><span>Zone-based guidance</span></div>
+          </div>
+          <div class="hero-feature-grid">
+            <article class="feature-card">
+              <span>Women-focused support</span>
+              <strong>Trusted local routes</strong>
+            </article>
+            <article class="feature-card">
+              <span>Instant zone score</span>
+              <strong>Safe travel signals</strong>
+            </article>
+            <article class="feature-card">
+              <span>Visibility</span>
+              <strong>Community-ready alerts</strong>
+            </article>
+          </div>
         </div>
         <div class="hero-visual">
-          <img src="/static/assets/safety-city.svg" alt="Stylized city safety visualization" />
+          <div class="hero-image-wrap">
+            <img src="/static/assets/safety-city.svg" alt="Stylized city safety visualization" />
+            <div class="hero-overlay-card">
+              <div class="hero-overlay-head">
+                <span>Recommended Safe Route</span>
+                <strong id="suggestedAreaName">Karachi Central</strong>
+              </div>
+              <div class="hero-overlay-body">
+                <div class="overlay-row"><span>Suggested zone</span><strong id="suggestedZone">Clifton</strong></div>
+                <div class="overlay-row"><span>Best travel time</span><strong id="suggestedTime">Morning</strong></div>
+                <div class="overlay-row"><span>Risk level</span><strong id="suggestedRisk">Moderate</strong></div>
+              </div>
+              <div class="overlay-footer">Use the area lookup to compare local safety signals before you travel.</div>
+            </div>
+          </div>
           <div class="pulse one"></div>
           <div class="pulse two"></div>
           <div class="pulse three"></div>
@@ -60,6 +108,10 @@
         <div class="grid two">
           <article class="card"><h2>Risk Distribution</h2><canvas id="riskChart"></canvas></article>
           <article class="card"><h2>Crime Type Frequency</h2><canvas id="crimeChart"></canvas></article>
+        </div>
+        <div class="grid two">
+          <article class="card highlight"><h2>Top Safe Area Picks</h2><div id="safeAreaList"></div></article>
+          <article class="card"><h2>Safety Guidance</h2><ul class="tip-list"><li>Travel in groups during low-risk times.</li><li>Use areas with good lighting and police presence.</li><li>Avoid high-risk zones at night and report suspicious activity.</li><li>Check the mobile companion for live alerts.</li></ul></article>
         </div>
         <div class="grid two">
           <article class="card"><h2>Risk by Area Type</h2><canvas id="areaTypeChart"></canvas></article>
@@ -107,6 +159,23 @@
             <strong>Ready</strong>
             <p>Choose a scenario and run the model.</p>
             <div class="prob-bars" id="probBars"></div>
+          </article>
+        </div>
+      </section>
+
+      <section id="area" class="panel">
+        <div class="grid two">
+          <form class="card area-card" id="areaForm">
+            <h2>Quick Area Safety Check</h2>
+            <label>Select your neighbourhood</label>
+            <select id="areaName" name="area_name"></select>
+            <button class="primary" type="submit">Check Safety</button>
+          </form>
+          <article class="card area-result" id="areaResult">
+            <span>Area safety summary</span>
+            <strong>Pick an area to view safety signals.</strong>
+            <p>Compare the local risk score, high-risk rate, and most common safety conditions.</p>
+            <div class="area-details" id="areaDetails"></div>
           </article>
         </div>
       </section>

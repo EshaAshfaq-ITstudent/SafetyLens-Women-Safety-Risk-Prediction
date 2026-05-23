@@ -92,6 +92,63 @@ function bindTabs() {
   });
 }
 
+function activateTab(tabName) {
+  const button = document.querySelector(`.tab[data-tab="${tabName}"]`);
+  if (button) button.click();
+}
+
+async function buildAreaLookup() {
+  const options = await api("/api/options");
+  const select = document.getElementById("areaName");
+  const areaNames = options.area_name || [];
+  select.innerHTML = areaNames.map((name) => `<option value="${name}">${name}</option>`).join("");
+
+  document.getElementById("areaForm").addEventListener("submit", async (event) => {
+    event.preventDefault();
+    const areaName = select.value;
+    const button = event.currentTarget.querySelector("button[type='submit']");
+    button.disabled = true;
+    button.textContent = "Checking...";
+
+    try {
+      const result = await api(`/api/area?name=${encodeURIComponent(areaName)}`);
+      renderAreaResult(result);
+    } catch (error) {
+      renderAreaError(error);
+    } finally {
+      button.disabled = false;
+      button.textContent = "Check Safety";
+    }
+  });
+}
+
+function renderAreaResult(area) {
+  const card = document.getElementById("areaResult");
+  const status = area.avg_risk_score < 0.35 ? "Low risk" : area.avg_risk_score < 0.55 ? "Moderate risk" : "High risk";
+  card.querySelector("strong").textContent = `${area.area_name}`;
+  card.querySelector("p").textContent = `Average risk ${area.avg_risk_score} • ${area.high_risk_rate}% high-risk incidents • Common time: ${title(area.common_time_of_day)}.`;
+  document.getElementById("areaDetails").innerHTML = `
+    <div class="detail"><strong>Area type</strong>${title(area.area_type)}</div>
+    <div class="detail"><strong>Records analysed</strong>${number(area.records)}</div>
+    <div class="detail"><strong>Safety status</strong>${status}</div>
+    <div class="detail"><strong>Top reported crime</strong>${title(area.top_crime)}</div>
+    <div class="detail"><strong>High risk rate</strong>${area.high_risk_rate}%</div>
+  `;
+  card.style.background = status === "High risk"
+    ? "linear-gradient(135deg, rgba(251,113,133,.18), rgba(13,24,29,.95))"
+    : status === "Moderate risk"
+      ? "linear-gradient(135deg, rgba(251,191,36,.16), rgba(13,24,29,.95))"
+      : "linear-gradient(135deg, rgba(52,211,153,.14), rgba(13,24,29,.95))";
+}
+
+function renderAreaError(error) {
+  const card = document.getElementById("areaResult");
+  card.querySelector("strong").textContent = "Area unavailable";
+  card.querySelector("p").textContent = error.message || "Unable to load area safety info.";
+  document.getElementById("areaDetails").innerHTML = "";
+  card.style.background = "linear-gradient(135deg, rgba(251,113,133,.18), rgba(13,24,29,.95))";
+}
+
 async function loadSummary() {
   const summary = await api("/api/summary");
   document.getElementById("statRecords").textContent = number(summary.records);
@@ -105,6 +162,16 @@ async function loadSummary() {
     <strong>${summary.highest_risk_area}</strong>
     <p>${summary.high_risk_rate}% of all records are high-risk. The dashboard below breaks down where, when, and why those signals appear.</p>
   `;
+  document.getElementById("safeAreaList").innerHTML = summary.top_safe_areas.map((item, index) => `
+    <div class="safe-item">
+      <strong>${index + 1}. ${item.area_name}</strong>
+      <span>Avg risk score ${item.avg_risk_score.toFixed(3)}</span>
+    </div>
+  `).join("");
+  document.getElementById("suggestedAreaName").textContent = summary.top_safe_areas[0]?.area_name || "Karachi Central";
+  document.getElementById("suggestedZone").textContent = summary.safe_area_type || "well-lit zone";
+  document.getElementById("suggestedTime").textContent = summary.safe_time_of_day || "Morning";
+  document.getElementById("suggestedRisk").textContent = summary.avg_risk_score < 0.35 ? "Low" : summary.avg_risk_score < 0.55 ? "Moderate" : "High";
 
   makeChart("riskChart", "doughnut", {
     labels: summary.risk_counts.map((x) => title(x.name)),
@@ -305,9 +372,23 @@ function renderPredictionError(error) {
   document.getElementById("probBars").innerHTML = "";
 }
 
+function bindHeroActions() {
+  const downloadBtn = document.getElementById("downloadAppBtn");
+  const checkBtn = document.getElementById("checkAreaBtn");
+  if (downloadBtn) {
+    downloadBtn.addEventListener("click", () => {
+      alert("Mobile companion coming soon. Use this dashboard to preview safety signals and area risk alerts.");
+    });
+  }
+  if (checkBtn) {
+    checkBtn.addEventListener("click", () => activateTab("area"));
+  }
+}
+
 async function boot() {
   bindTabs();
-  await Promise.all([loadSummary(), loadCharts(), buildPredictor()]);
+  bindHeroActions();
+  await Promise.all([loadSummary(), loadCharts(), buildPredictor(), buildAreaLookup()]);
   await loadMap();
 }
 
