@@ -10,10 +10,62 @@ const colors = {
 const riskOrder = ["low", "medium", "high"];
 const charts = {};
 let leafletMap;
+const themeStorageKey = "dashboardTheme";
 
 Chart.defaults.color = colors.muted;
 Chart.defaults.borderColor = "rgba(214,255,237,.12)";
 Chart.defaults.font.family = "Inter, system-ui, sans-serif";
+
+function applyTheme(theme) {
+  const isLight = theme === "light";
+  document.body.classList.toggle("light", isLight);
+  document.body.dataset.theme = theme;
+  const toggle = document.getElementById("themeToggle");
+  if (toggle) {
+    toggle.textContent = isLight ? "Dark mode" : "Light mode";
+    toggle.setAttribute("aria-pressed", String(isLight));
+  }
+  updateChartTheme();
+}
+
+function updateChartTheme() {
+  const computed = getComputedStyle(document.documentElement);
+  const textColor = computed.getPropertyValue("--text").trim() || colors.text;
+  Object.values(charts).forEach((chart) => {
+    if (!chart) return;
+    chart.options.color = textColor;
+    if (chart.options.plugins?.tooltip) {
+      chart.options.plugins.tooltip.titleColor = textColor;
+      chart.options.plugins.tooltip.bodyColor = textColor;
+    }
+    if (chart.options.scales) {
+      Object.values(chart.options.scales).forEach((scale) => {
+        if (scale.ticks) scale.ticks.color = textColor;
+        if (scale.grid) scale.grid.color = "rgba(255,255,255,.08)";
+      });
+    }
+    chart.update();
+  });
+}
+
+function initTheme() {
+  const saved = localStorage.getItem(themeStorageKey);
+  const prefersDark = window.matchMedia("(prefers-color-scheme: dark)").matches;
+  applyTheme(saved === "light" || saved === "dark" ? saved : prefersDark ? "dark" : "light");
+  const toggle = document.getElementById("themeToggle");
+  toggle?.addEventListener("click", () => {
+    const nextTheme = document.body.classList.contains("light") ? "dark" : "light";
+    applyTheme(nextTheme);
+    localStorage.setItem(themeStorageKey, nextTheme);
+  });
+}
+
+function hideLoader() {
+  const loader = document.getElementById("loaderOverlay");
+  if (!loader) return;
+  loader.classList.add("hidden");
+  window.setTimeout(() => loader.remove(), 500);
+}
 
 const api = (path, options) => fetch(path, options).then(async (res) => {
   if (!res.ok) {
@@ -386,13 +438,17 @@ function bindHeroActions() {
 }
 
 async function boot() {
+  initTheme();
   bindTabs();
   bindHeroActions();
   await Promise.all([loadSummary(), loadCharts(), buildPredictor(), buildAreaLookup()]);
   await loadMap();
 }
 
-boot().catch((error) => {
-  console.error(error);
-  document.body.insertAdjacentHTML("afterbegin", `<div style="padding:12px;background:#7f1d1d;color:white">Dashboard error: ${error.message}</div>`);
-});
+boot()
+  .then(hideLoader)
+  .catch((error) => {
+    console.error(error);
+    hideLoader();
+    document.body.insertAdjacentHTML("afterbegin", `<div style="padding:12px;background:#7f1d1d;color:white">Dashboard error: ${error.message}</div>`);
+  });

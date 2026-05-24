@@ -10,6 +10,22 @@
     <link rel="stylesheet" href="/static/styles.css" />
   </head>
   <body>
+    <div id="loaderOverlay" class="loader-overlay">
+      <div class="loader-card">
+        <div class="loader-symbol" aria-hidden="true">
+          <span class="shield-top"></span>
+          <span class="shield-bottom"></span>
+          <span class="shield-glow"></span>
+        </div>
+        <h1>Safety Lens</h1>
+        <p>Women safety companion</p>
+        <div class="loader-graphic">
+          <span class="loader-dot"></span>
+          <span class="loader-dot"></span>
+          <span class="loader-dot"></span>
+        </div>
+      </div>
+    </div>
     <div class="ambient"></div>
     <header class="topbar">
       <div class="topbar-brand">
@@ -32,6 +48,7 @@
       <div class="top-actions">
         <button class="secondary" id="downloadAppBtn">Download App</button>
         <button class="secondary" id="checkAreaBtn">Area Safety</button>
+        <button class="secondary" id="themeToggle" aria-pressed="false">Light mode</button>
       </div>
     </header>
 
