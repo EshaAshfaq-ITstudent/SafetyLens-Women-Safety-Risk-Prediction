@@ -6,6 +6,9 @@
     <title>Women Safety Risk Intelligence</title>
     <link rel="preconnect" href="https://cdn.jsdelivr.net" />
     <link rel="preconnect" href="https://unpkg.com" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet" />
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
     <link rel="stylesheet" href="/static/styles.css" />
   </head>
@@ -27,28 +30,68 @@
       </div>
     </div>
     <div class="ambient"></div>
-    <header class="topbar">
-      <div class="topbar-brand">
-        <div class="brand">
-          <img src="/static/assets/safety-city.svg" alt="Safety Lens logo" />
-          <div>
-            <span>Women safety companion</span>
-            <strong>Safety Lens</strong>
+
+    <!-- Sidebar Navigation -->
+    <aside class="sidebar" id="sidebar">
+      <div class="sidebar-header">
+        <div class="sidebar-brand">
+          <img src="/static/assets/safety-city.svg" alt="Safety Lens" class="sidebar-logo" />
+          <div class="brand-text">
+            <span class="brand-subtitle">Women safety</span>
+            <span class="brand-name">Safety Lens</span>
           </div>
         </div>
+        <button class="sidebar-toggle" id="sidebarToggle" aria-label="Toggle sidebar">
+          <span></span>
+          <span></span>
+          <span></span>
+        </button>
       </div>
-      <nav class="topnav" aria-label="Dashboard views">
-        <button class="tab active" data-tab="overview">Overview</button>
-        <button class="tab" data-tab="trends">Trends</button>
-        <button class="tab" data-tab="map">Map</button>
-        <button class="tab" data-tab="factors">Factors</button>
-        <button class="tab" data-tab="predict">Predict</button>
-        <button class="tab" data-tab="area">Area</button>
+
+      <nav class="sidebar-nav" aria-label="Dashboard navigation">
+        <a href="#overview" class="nav-link active" data-tab="overview">
+          <span class="nav-icon">📊</span>
+          <span class="nav-label">Overview</span>
+        </a>
+        <a href="#trends" class="nav-link" data-tab="trends">
+          <span class="nav-icon">📈</span>
+          <span class="nav-label">Trends</span>
+        </a>
+        <a href="#map" class="nav-link" data-tab="map">
+          <span class="nav-icon">🗺️</span>
+          <span class="nav-label">Map</span>
+        </a>
+        <a href="#factors" class="nav-link" data-tab="factors">
+          <span class="nav-icon">⚙️</span>
+          <span class="nav-label">Factors</span>
+        </a>
+        <a href="#predict" class="nav-link" data-tab="predict">
+          <span class="nav-icon">🔮</span>
+          <span class="nav-label">Predict</span>
+        </a>
+        <a href="#area" class="nav-link" data-tab="area">
+          <span class="nav-icon">📍</span>
+          <span class="nav-label">Area Check</span>
+        </a>
       </nav>
-      <div class="top-actions">
-        <button class="secondary" id="downloadAppBtn">Download App</button>
-        <button class="secondary" id="checkAreaBtn">Area Safety</button>
-        <button class="secondary" id="themeToggle" aria-pressed="false">Light mode</button>
+
+      <div class="sidebar-footer">
+        <button class="sidebar-action theme-toggle" id="themeToggle" aria-pressed="false" title="Toggle theme">
+          <span class="theme-icon">🌙</span>
+          <span class="theme-label">Dark</span>
+        </button>
+        <button class="sidebar-action" id="downloadAppBtn" title="Download App">
+          <span>📱</span>
+          <span class="action-label">Download</span>
+        </button>
+      </div>
+    </aside>
+
+    <!-- Top Bar (Minimal) -->
+    <header class="topbar-minimal">
+      <div class="topbar-content">
+        <button class="menu-icon" id="menuToggle" aria-label="Menu">☰</button>
+        <div class="topbar-title">Safety Lens</div>
       </div>
     </header>
 
@@ -116,12 +159,38 @@
       </section>
 
       <section id="overview" class="panel active">
+        <h2 class="section-title">Safety Overview Dashboard</h2>
+        <p class="section-desc">Real-time insights into women safety risk patterns across your city</p>
         <div class="stat-grid">
           <article class="stat"><span>Records</span><strong id="statRecords">...</strong></article>
           <article class="stat"><span>Areas</span><strong id="statAreas">...</strong></article>
           <article class="stat"><span>Avg Risk</span><strong id="statRisk">...</strong></article>
           <article class="stat danger"><span>High Risk</span><strong id="statHigh">...</strong></article>
         </div>
+
+        <div class="visual-grid">
+          <div class="visual-card" style="background: linear-gradient(135deg, rgba(230, 124, 86, .2), rgba(212, 165, 116, .1));">
+            <div class="visual-icon">🛡️</div>
+            <h3>Smart Alerts</h3>
+            <p>Real-time safety notifications for high-risk zones</p>
+          </div>
+          <div class="visual-card" style="background: linear-gradient(135deg, rgba(124, 182, 111, .2), rgba(212, 165, 116, .1));">
+            <div class="visual-icon">📍</div>
+            <h3>Location Safety</h3>
+            <p>Check safety status of any neighborhood instantly</p>
+          </div>
+          <div class="visual-card" style="background: linear-gradient(135deg, rgba(230, 124, 86, .15), rgba(212, 165, 116, .1));">
+            <div class="visual-icon">📊</div>
+            <h3>Data Insights</h3>
+            <p>Comprehensive analysis of safety trends over time</p>
+          </div>
+          <div class="visual-card" style="background: linear-gradient(135deg, rgba(124, 182, 111, .15), rgba(212, 165, 116, .1));">
+            <div class="visual-icon">👥</div>
+            <h3>Community Driven</h3>
+            <p>Built on real data and women's experiences</p>
+          </div>
+        </div>
+
         <div class="grid two">
           <article class="card"><h2>Risk Distribution</h2><canvas id="riskChart"></canvas></article>
           <article class="card"><h2>Crime Type Frequency</h2><canvas id="crimeChart"></canvas></article>
@@ -137,6 +206,32 @@
       </section>
 
       <section id="trends" class="panel">
+        <h2 class="section-title">Safety Trends & Patterns</h2>
+        <p class="section-desc">Analyze how safety risks change over time</p>
+
+        <div class="visual-grid">
+          <div class="visual-card" style="background: linear-gradient(135deg, rgba(230, 124, 86, .2), rgba(212, 165, 116, .1));">
+            <div class="visual-icon">📈</div>
+            <h3>Monthly Trends</h3>
+            <p>Track changes in risk levels throughout the year</p>
+          </div>
+          <div class="visual-card" style="background: linear-gradient(135deg, rgba(124, 182, 111, .2), rgba(212, 165, 116, .1));">
+            <div class="visual-icon">🕐</div>
+            <h3>Time Patterns</h3>
+            <p>Hourly and daily safety variations</p>
+          </div>
+          <div class="visual-card" style="background: linear-gradient(135deg, rgba(212, 165, 116, .2), rgba(230, 124, 86, .1));">
+            <div class="visual-icon">📅</div>
+            <h3>Seasonal Changes</h3>
+            <p>Understand seasonal safety patterns</p>
+          </div>
+          <div class="visual-card" style="background: linear-gradient(135deg, rgba(124, 182, 111, .15), rgba(212, 165, 116, .1));">
+            <div class="visual-icon">🔍</div>
+            <h3>Predictive Insights</h3>
+            <p>Forecast future safety risks</p>
+          </div>
+        </div>
+
         <div class="grid one">
           <article class="card wide"><h2>Monthly Risk Trend</h2><canvas id="monthlyChart"></canvas></article>
         </div>
@@ -147,6 +242,32 @@
       </section>
 
       <section id="map" class="panel">
+        <h2 class="section-title">Risk Hotspot Map</h2>
+        <p class="section-desc">Visualize high-risk areas and corridors across the city</p>
+
+        <div class="visual-grid">
+          <div class="visual-card" style="background: linear-gradient(135deg, rgba(230, 124, 86, .2), rgba(212, 165, 116, .1));">
+            <div class="visual-icon">🗺️</div>
+            <h3>Interactive Map</h3>
+            <p>Explore risk distribution by location</p>
+          </div>
+          <div class="visual-card" style="background: linear-gradient(135deg, rgba(124, 182, 111, .2), rgba(212, 165, 116, .1));">
+            <div class="visual-icon">⚠️</div>
+            <h3>Hotspot Detection</h3>
+            <p>Identify high-risk corridors and zones</p>
+          </div>
+          <div class="visual-card" style="background: linear-gradient(135deg, rgba(212, 165, 116, .2), rgba(230, 124, 86, .1));">
+            <div class="visual-icon">📍</div>
+            <h3>Route Planning</h3>
+            <p>Plan safer routes with risk data</p>
+          </div>
+          <div class="visual-card" style="background: linear-gradient(135deg, rgba(124, 182, 111, .15), rgba(212, 165, 116, .1));">
+            <div class="visual-icon">🔴</div>
+            <h3>Risk Corridors</h3>
+            <p>High-incident travel paths and zones</p>
+          </div>
+        </div>
+
         <div class="map-layout">
           <article class="card map-card"><h2>High-Risk Hotspot Map</h2><div id="leafletMap"></div></article>
           <article class="card list-card"><h2>Top Risk Corridors</h2><div id="corridorList"></div></article>
@@ -154,6 +275,32 @@
       </section>
 
       <section id="factors" class="panel">
+        <h2 class="section-title">Safety Risk Factors</h2>
+        <p class="section-desc">Understand what factors influence safety risks in your area</p>
+
+        <div class="visual-grid">
+          <div class="visual-card" style="background: linear-gradient(135deg, rgba(230, 124, 86, .2), rgba(212, 165, 116, .1));">
+            <div class="visual-icon">💡</div>
+            <h3>Lighting Conditions</h3>
+            <p>Impact of street lighting on safety perception</p>
+          </div>
+          <div class="visual-card" style="background: linear-gradient(135deg, rgba(124, 182, 111, .2), rgba(212, 165, 116, .1));">
+            <div class="visual-icon">👮</div>
+            <h3>Police Presence</h3>
+            <p>Effect of police patrols on risk reduction</p>
+          </div>
+          <div class="visual-card" style="background: linear-gradient(135deg, rgba(212, 165, 116, .2), rgba(230, 124, 86, .1));">
+            <div class="visual-icon">📹</div>
+            <h3>CCTV Coverage</h3>
+            <p>Surveillance impact on area safety</p>
+          </div>
+          <div class="visual-card" style="background: linear-gradient(135deg, rgba(124, 182, 111, .15), rgba(212, 165, 116, .1));">
+            <div class="visual-icon">🌦️</div>
+            <h3>Weather Impact</h3>
+            <p>Seasonal weather effects on safety</p>
+          </div>
+        </div>
+
         <div class="grid two">
           <article class="card"><h2>Lighting Condition Impact</h2><canvas id="lightingChart"></canvas></article>
           <article class="card"><h2>Police Presence Impact</h2><canvas id="policeChart"></canvas></article>
@@ -165,14 +312,16 @@
       </section>
 
       <section id="predict" class="panel">
+        <h2 class="section-title">Scenario Risk Predictor</h2>
+        <p class="section-desc">Simulate different scenarios to understand safety risks</p>
         <div class="predict-layout">
           <form class="card form-card" id="predictForm">
-            <h2>Scenario Risk Predictor</h2>
+            <h3>Enter Scenario Details</h3>
             <div class="form-grid" id="formGrid"></div>
             <button class="primary" type="submit">Predict Risk</button>
           </form>
-          <article class="result-card" id="predictionResult">
-            <span>Prediction</span>
+          <article class="card result-card" id="predictionResult">
+            <span>Your Prediction</span>
             <strong>Ready</strong>
             <p>Choose a scenario and run the model.</p>
             <div class="prob-bars" id="probBars"></div>
@@ -181,9 +330,11 @@
       </section>
 
       <section id="area" class="panel">
+        <h2 class="section-title">Area Safety Lookup</h2>
+        <p class="section-desc">Check safety status of your neighborhood</p>
         <div class="grid two">
           <form class="card area-card" id="areaForm">
-            <h2>Quick Area Safety Check</h2>
+            <h3>Quick Area Safety Check</h3>
             <label>Select your neighbourhood</label>
             <select id="areaName" name="area_name"></select>
             <button class="primary" type="submit">Check Safety</button>
@@ -197,6 +348,53 @@
         </div>
       </section>
     </main>
+
+    <footer class="footer">
+      <div class="footer-content">
+        <div class="footer-section">
+          <h3>Safety Lens</h3>
+          <p>Women Safety Risk Intelligence Dashboard</p>
+          <p class="footer-credit">Designed & Developed by</p>
+          <div class="credits">
+            <span>Esha Ashfaq</span>
+            <span>Faiza Altaf</span>
+            <span>Affan Ahmed</span>
+          </div>
+        </div>
+        <div class="footer-section">
+          <h3>Features</h3>
+          <ul>
+            <li><a href="#overview">Overview Dashboard</a></li>
+            <li><a href="#trends">Trend Analysis</a></li>
+            <li><a href="#map">Risk Mapping</a></li>
+            <li><a href="#factors">Safety Factors</a></li>
+          </ul>
+        </div>
+        <div class="footer-section">
+          <h3>Resources</h3>
+          <ul>
+            <li><a href="#predict">Risk Predictor</a></li>
+            <li><a href="#area">Area Check</a></li>
+            <li>Live Safety Data</li>
+            <li>Community Reports</li>
+          </ul>
+        </div>
+        <div class="footer-section stats-footer">
+          <h3>Impact</h3>
+          <div class="footer-stat">
+            <strong id="footerRecords">100K+</strong>
+            <span>Records Analyzed</span>
+          </div>
+          <div class="footer-stat">
+            <strong id="footerAreas">50+</strong>
+            <span>Areas Covered</span>
+          </div>
+        </div>
+      </div>
+      <div class="footer-bottom">
+        <p>&copy; 2026 Safety Lens • DataScience Lab • Women Safety Companion</p>
+      </div>
+    </footer>
 
     <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
     <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>

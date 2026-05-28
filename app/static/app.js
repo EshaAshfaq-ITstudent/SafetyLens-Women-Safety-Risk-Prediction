@@ -1,10 +1,10 @@
 const colors = {
-  low: "#34d399",
-  medium: "#fbbf24",
-  high: "#fb7185",
-  cyan: "#67e8f9",
-  muted: "#9fb6ad",
-  text: "#edf7f2",
+  low: "#7cb66f",
+  medium: "#d4a574",
+  high: "#c75a3f",
+  cyan: "#e67e5c",
+  muted: "#8b6f5f",
+  text: "#3d2817",
 };
 
 const riskOrder = ["low", "medium", "high"];
@@ -13,8 +13,9 @@ let leafletMap;
 const themeStorageKey = "dashboardTheme";
 
 Chart.defaults.color = colors.muted;
-Chart.defaults.borderColor = "rgba(214,255,237,.12)";
-Chart.defaults.font.family = "Inter, system-ui, sans-serif";
+Chart.defaults.borderColor = "rgba(230, 124, 86, .12)";
+Chart.defaults.font.family = "Poppins, Inter, system-ui, sans-serif";
+Chart.defaults.font.weight = "500";
 
 function applyTheme(theme) {
   const isLight = theme === "light";
@@ -22,7 +23,10 @@ function applyTheme(theme) {
   document.body.dataset.theme = theme;
   const toggle = document.getElementById("themeToggle");
   if (toggle) {
-    toggle.textContent = isLight ? "Dark mode" : "Light mode";
+    const icon = toggle.querySelector(".theme-icon");
+    const label = toggle.querySelector(".theme-label");
+    if (icon) icon.textContent = isLight ? "☀️" : "🌙";
+    if (label) label.textContent = isLight ? "Light" : "Dark";
     toggle.setAttribute("aria-pressed", String(isLight));
   }
   updateChartTheme();
@@ -58,6 +62,7 @@ function initTheme() {
     applyTheme(nextTheme);
     localStorage.setItem(themeStorageKey, nextTheme);
   });
+  initSidebar();
 }
 
 function hideLoader() {
@@ -119,14 +124,14 @@ function makeChart(id, type, data, options = {}) {
     options: {
       responsive: true,
       maintainAspectRatio: false,
-      animation: { duration: 1100, easing: "easeOutQuart" },
+      animation: { duration: 1400, easing: "easeOutQuart" },
       plugins: {
-        legend: { labels: { boxWidth: 10, usePointStyle: true } },
-        tooltip: { backgroundColor: "#061112", titleColor: colors.text, bodyColor: colors.text },
+        legend: { labels: { boxWidth: 10, usePointStyle: true, padding: 16, font: { size: 12, weight: 600 } } },
+        tooltip: { backgroundColor: "rgba(255, 255, 255, 0.9)", titleColor: colors.text, bodyColor: colors.text, borderColor: "rgba(230, 124, 86, .2)", borderWidth: 1, padding: 12, cornerRadius: 8, displayColors: true },
       },
       scales: type === "doughnut" ? undefined : {
-        x: { grid: { display: false }, stacked: options.stacked || false },
-        y: { beginAtZero: true, stacked: options.stacked || false },
+        x: { grid: { display: false, drawBorder: false }, ticks: { color: colors.muted } },
+        y: { beginAtZero: true, grid: { color: "rgba(230, 124, 86, .08)", drawBorder: false }, ticks: { color: colors.muted } },
       },
       ...options,
     },
@@ -134,14 +139,42 @@ function makeChart(id, type, data, options = {}) {
 }
 
 function bindTabs() {
-  document.querySelectorAll(".tab").forEach((button) => {
-    button.addEventListener("click", () => {
-      document.querySelectorAll(".tab, .panel").forEach((el) => el.classList.remove("active"));
-      button.classList.add("active");
-      document.getElementById(button.dataset.tab).classList.add("active");
-      if (button.dataset.tab === "map" && leafletMap) setTimeout(() => leafletMap.invalidateSize(), 100);
+  // Handle sidebar nav links
+  document.querySelectorAll(".nav-link").forEach((link) => {
+    link.addEventListener("click", (e) => {
+      e.preventDefault();
+      document.querySelectorAll(".nav-link, .panel").forEach((el) => el.classList.remove("active"));
+      link.classList.add("active");
+      const tabId = link.dataset.tab;
+      const panel = document.getElementById(tabId);
+      panel.classList.add("active");
+      
+      // Smooth scroll to section
+      setTimeout(() => {
+        panel.scrollIntoView({ behavior: "smooth", block: "start" });
+      }, 100);
+      
+      if (tabId === "map" && leafletMap) setTimeout(() => leafletMap.invalidateSize(), 100);
     });
   });
+}
+
+// Sidebar toggle functionality
+function initSidebar() {
+  const sidebar = document.getElementById("sidebar");
+  const sidebarToggle = document.getElementById("sidebarToggle");
+  const menuToggle = document.getElementById("menuToggle");
+  
+  sidebarToggle?.addEventListener("click", () => {
+    sidebar.classList.toggle("collapsed");
+    localStorage.setItem("sidebarCollapsed", sidebar.classList.contains("collapsed"));
+  });
+  
+  // Restore sidebar state
+  const isCollapsed = localStorage.getItem("sidebarCollapsed") === "true";
+  if (isCollapsed) {
+    sidebar.classList.add("collapsed");
+  }
 }
 
 function activateTab(tabName) {
@@ -187,10 +220,10 @@ function renderAreaResult(area) {
     <div class="detail"><strong>High risk rate</strong>${area.high_risk_rate}%</div>
   `;
   card.style.background = status === "High risk"
-    ? "linear-gradient(135deg, rgba(251,113,133,.18), rgba(13,24,29,.95))"
+    ? "linear-gradient(135deg, rgba(199, 90, 63, .18), rgba(230, 124, 86, .08))"
     : status === "Moderate risk"
-      ? "linear-gradient(135deg, rgba(251,191,36,.16), rgba(13,24,29,.95))"
-      : "linear-gradient(135deg, rgba(52,211,153,.14), rgba(13,24,29,.95))";
+      ? "linear-gradient(135deg, rgba(212, 165, 116, .16), rgba(230, 124, 86, .06))"
+      : "linear-gradient(135deg, rgba(124, 182, 111, .14), rgba(230, 124, 86, .05))";
 }
 
 function renderAreaError(error) {
@@ -209,6 +242,8 @@ async function loadSummary() {
   document.getElementById("statHigh").textContent = `${summary.high_risk_rate}%`;
   document.getElementById("rangeText").textContent = `${summary.date_range.start} to ${summary.date_range.end}`;
   document.getElementById("recordText").textContent = `${number(summary.records)} records`;
+  document.getElementById("footerRecords").textContent = `${number(summary.records)}+`;
+  document.getElementById("footerAreas").textContent = `${summary.areas}+`;
   document.getElementById("highestArea").innerHTML = `
     <span>Highest average risk area</span>
     <strong>${summary.highest_risk_area}</strong>
