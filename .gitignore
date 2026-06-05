@@ -1,0 +1,56 @@
+# Python virtual environments
+.venv/
+venv/
+env/
+ENV/
+app/venv/
+
+# Python cache and compiled files
+__pycache__/
+*.py[cod]
+*$py.class
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+
+# Environment and secrets
+.env
+.env.*
+!.env.example
+
+# Logs
+*.log
+app/*.log
+uvicorn*.log
+
+# Jupyter
+.ipynb_checkpoints/
+
+# Frontend dependencies and build output
+node_modules/
+safe-path-guide/node_modules/
+dist/
+build/
+safe-path-guide/dist/
+safe-path-guide/build/
+
+# Frontend local files
+.vite/
+safe-path-guide/.vite/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+
+# OS and editor files
+.DS_Store
+Thumbs.db
+desktop.ini
+.vscode/
+.idea/
+
+# Temporary files
+*.tmp
+*.temp
+*.bak
+*.swp
