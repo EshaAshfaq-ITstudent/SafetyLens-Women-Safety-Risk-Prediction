@@ -87,26 +87,69 @@ The platform uses a Karachi women safety dataset to:
 
 ## Screenshots
 
-Add your screenshots in a folder such as `docs/screenshots/` and then paste them here using the names below.
+### EDA Overview Dashboard
 
-Recommended screenshot set:
+![EDA Overview Dashboard](docs/screenshots/01_eda_overview_dashboard.png)
 
-| Section | Suggested file name |
-| --- | --- |
-| EDA dashboard overview | `docs/screenshots/eda-overview.png` |
-| Risk distribution dashboard | `docs/screenshots/risk-distribution.png` |
-| React home dashboard | `docs/screenshots/frontend-home.png` |
-| Hotspot map | `docs/screenshots/hotspot-map.png` |
-| Prediction form | `docs/screenshots/predictor.png` |
-| Safe route planner | `docs/screenshots/routes.png` |
+### Correlation Heatmap
 
-Example after adding images:
+![Correlation Heatmap](docs/screenshots/02_correlation_heatmap.png)
 
-```md
-![React Dashboard](docs/screenshots/frontend-home.png)
-![Hotspot Map](docs/screenshots/hotspot-map.png)
-![Risk Predictor](docs/screenshots/predictor.png)
-```
+### Temporal Trends
+
+![Temporal Trends](docs/screenshots/03_temporal_trends.png)
+
+### Geographic Scatter Map
+
+![Geographic Scatter Map](docs/screenshots/04_geographic_scatter_map.png)
+
+### Unsafe Rating and Crowd Analysis
+
+![Unsafe Rating and Crowd Analysis](docs/screenshots/05_unsafe_rating_crowd_analysis.png)
+
+### Feature Importance
+
+![Feature Importance KBest](docs/screenshots/06_feature_importance_kbest.png)
+
+### PCA Analysis
+
+![PCA Analysis](docs/screenshots/07_pca_analysis.png)
+
+### Confusion Matrices
+
+![Confusion Matrices](docs/screenshots/08_confusion_matrices.png)
+
+### Model Comparison
+
+![Model Comparison](docs/screenshots/09_model_comparison.png)
+
+### ROC Curves
+
+![ROC Curves](docs/screenshots/10_roc_curves.png)
+
+### Random Forest Feature Importance
+
+![Random Forest Feature Importance](docs/screenshots/11_rf_feature_importance.png)
+
+### Linear Regression Results
+
+![Linear Regression Results](docs/screenshots/12_linear_regression_results.png)
+
+### DBSCAN Hotspot Map
+
+![DBSCAN Hotspot Map](docs/screenshots/13_dbscan_hotspot_map.png)
+
+### Safe Route Comparison
+
+![Safe Route Comparison](docs/screenshots/14_safe_route_comparison.png)
+
+### Time-Based Risk Alerts
+
+![Time-Based Risk Alerts](docs/screenshots/15_time_based_risk_alerts.png)
+
+### Risk Decay Simulation
+
+![Risk Decay Simulation](docs/screenshots/16_risk_decay_simulation.png)
 
 ---
 
