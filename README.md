@@ -381,6 +381,6 @@ The notebook `fullproject.ipynb` contains the exploratory analysis behind the pr
 
 ## Author
 
-Built by **Eshan** as a women safety prediction and city risk intelligence project.
+Built by **Esha Ashfaq, Faiza Altaf, Affan Ahmed** as a women safety prediction and city risk intelligence project.
 
 If this project helps inspire safer, smarter city navigation, give it a star on GitHub.
